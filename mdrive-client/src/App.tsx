@@ -1,0 +1,31 @@
+import { Routes, Route } from "react-router-dom";
+import { Layout } from "./components/Layout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { LoginPage } from "./pages/Login";
+import { SetupPage } from "./pages/Setup";
+import { DashboardPage } from "./pages/Dashboard";
+import { AdminUsersPage } from "./pages/AdminUsers";
+
+function App() {
+  return (
+    <Routes>
+      {/* Public routes */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/setup" element={<SetupPage />} />
+
+      {/* Protected routes */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/admin/users" element={<AdminUsersPage />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default App;
