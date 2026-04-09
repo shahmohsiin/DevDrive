@@ -61,7 +61,7 @@ export function LoginPage() {
               transition={{ delay: 0.2 }}
               className="text-5xl font-bold leading-tight tracking-tight text-text-primary mb-6"
             >
-              The Future of <br /> Workspace <span className="text-blue-500">Security.</span>
+              Seamless Codebase & Data <span className="text-blue-500">Migration.</span>
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0 }}
@@ -69,7 +69,7 @@ export function LoginPage() {
               transition={{ delay: 0.4 }}
               className="text-sm text-text-muted font-medium max-w-sm leading-relaxed"
             >
-              Command your assets with high-performance synchronization and enterprise-grade security protocols.
+              Share, migrate, and synchronize your code and data across environments securely and instantly.
             </motion.p>
           </div>
 
@@ -78,7 +78,7 @@ export function LoginPage() {
             animate={{ opacity: 0.3 }}
             className="text-[10px] font-bold text-text-muted uppercase tracking-[0.5em] relative z-10"
           >
-            Encryption Standard AES-256-GCM
+            Powered by Vercel Edge Network
           </motion.div>
         </div>
 
@@ -101,8 +101,8 @@ export function LoginPage() {
             </div>
 
             <div className="space-y-2">
-               <h3 className="text-xl font-bold text-text-primary tracking-tight">Access Control</h3>
-               <p className="text-xs text-text-muted font-medium">Please sign in to access your workspace.</p>
+               <h3 className="text-xl font-bold text-text-primary tracking-tight">Welcome Back</h3>
+               <p className="text-xs text-text-muted font-medium">Please sign in to access your data and code.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -150,17 +150,25 @@ export function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:bg-blue-500 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50"
+                className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:bg-blue-500 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 relative overflow-hidden"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Logging in...
+                    Waking up server...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     Sign In
                   </span>
+                )}
+                {loading && (
+                    <motion.div 
+                      initial={{ x: "-100%" }}
+                      animate={{ x: "100%" }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+                    />
                 )}
               </button>
             </form>

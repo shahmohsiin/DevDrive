@@ -16,6 +16,8 @@ export interface FolderMessageDoc {
   senderEmail: string;
   content: string;
   attachments?: ChatAttachment[];
+  replyTo?: ObjectId;
+  replyToContent?: string;
   createdAt: Date;
 }
 

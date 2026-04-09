@@ -125,9 +125,12 @@ export function NotesSidebar({ folderId, onClose }: NotesSidebarProps) {
       const res = await deleteNote(id);
       if (res.success) {
         setNotes(notes.filter(n => n._id !== id));
+      } else {
+        alert("Failed to delete note: " + (res as any).error);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert("Error deleting note: " + (err.message || "Unknown error"));
     }
   }
 
@@ -174,7 +177,7 @@ export function NotesSidebar({ folderId, onClose }: NotesSidebarProps) {
             <StickyNote size={18} />
           </div>
           <div>
-            <h3 className="text-[12px] font-black uppercase tracking-[0.2em] text-text-primary">Workspace Notes</h3>
+            <h3 className="text-[12px] font-black uppercase tracking-[0.2em] text-text-primary">Notes</h3>
             <p className="text-[9px] font-bold text-text-muted uppercase tracking-[0.1em]">
               {loading ? "Fetching records..." : `${notes.length} Note${notes.length !== 1 ? 's' : ''}`}
             </p>

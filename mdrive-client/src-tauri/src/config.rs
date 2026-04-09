@@ -24,7 +24,7 @@ pub fn load_config() -> AppConfig {
         Ok(content) => serde_json::from_str(&content).unwrap_or_default(),
         Err(_) => {
             let config = AppConfig {
-                api_url: "http://localhost:4001".to_string(),
+                api_url: "https://dev-drive-mdrive-api.vercel.app".to_string(),
                 ..Default::default()
             };
             save_config(&config).ok();

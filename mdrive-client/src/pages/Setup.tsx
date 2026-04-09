@@ -82,21 +82,21 @@ export function SetupPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-xl">
                <img src={logo} alt="DevDrive" className="w-full h-full object-cover" />
             </div>
-            <span className="text-sm font-bold tracking-[0.4em] text-text-primary uppercase">Initialize</span>
+            <span className="text-sm font-bold tracking-[0.4em] text-text-primary uppercase">Loading</span>
           </motion.div>
 
           <div className="relative z-10">
             <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-5xl font-bold leading-tight tracking-tight text-text-primary mb-6">
-              Set Up Your <br /> Cloud <span className="text-indigo-500">Workspace.</span>
+              Connect to Your <br /> Cloud <span className="text-indigo-500">Workspace.</span>
             </motion.h2>
             <p className="text-sm text-text-muted font-medium max-w-sm leading-relaxed">
-              Create your administrator account and connect this desktop app to your organization's workspace server.
+              Link your desktop client to your secure codebase and data migration server.
             </p>
           </div>
 
           <div className="flex items-center gap-1.5 opacity-30 italic relative z-10">
              <HelpCircle size={10} className="text-text-muted" />
-              <span className="text-[9px] text-text-muted font-bold tracking-widest uppercase">Account Configuration</span>
+              <span className="text-[9px] text-text-muted font-bold tracking-widest uppercase">Client Setup</span>
           </div>
         </div>
 
@@ -117,7 +117,7 @@ export function SetupPage() {
                <h3 className="text-2xl font-bold text-text-primary tracking-tight">
                    {step === "api" ? "Server Connectivity" : "Account Setup"}
                 </h3>
-                <p className="text-xs text-text-muted font-medium">Step {step === "api" ? "1" : "2"} of 2 — {step === "api" ? "Connect to workspace" : "Configure administrator"}</p>
+                <p className="text-xs text-text-muted font-medium">Step {step === "api" ? "1" : "2"} of 2 — {step === "api" ? "Connecting to server" : "Configure administrator"}</p>
             </div>
 
             <div className="flex gap-2 mb-10">
@@ -138,7 +138,7 @@ export function SetupPage() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                        <label htmlFor="setup-api-url" className="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1">
-                          Cloud Workspace Address
+                          Migration Server Address
                        </label>
                        <div className="relative group">
                           <Server size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/30 group-focus-within:text-blue-400 transition-colors" />
@@ -164,9 +164,24 @@ export function SetupPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:bg-blue-500 hover:shadow-blue-500/40 transition-all disabled:opacity-50"
+                    className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:bg-blue-500 hover:shadow-blue-500/40 transition-all disabled:opacity-50 relative overflow-hidden flex items-center justify-center gap-2"
                   >
-                    {loading ? "Establishing Link..." : "Verify Connection"}
+                    {loading ? (
+                      <>
+                        <Server size={14} className="animate-pulse" />
+                        Connecting...
+                      </>
+                    ) : (
+                      "Verify Connection"
+                    )}
+                    {loading && (
+                      <motion.div 
+                        initial={{ x: "-100%" }}
+                        animate={{ x: "100%" }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+                      />
+                    )}
                   </button>
                 </motion.form>
               ) : (

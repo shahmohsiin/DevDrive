@@ -23,7 +23,7 @@ async function ensureApiState(): Promise<void> {
 }
 
 function getApiUrl(): string {
-  return cachedApiUrl || "http://localhost:3001";
+  return cachedApiUrl || "https://dev-drive-mdrive-api.vercel.app";
 }
 
 function getHeaders(hasJsonBody = false): Record<string, string> {
@@ -190,8 +190,12 @@ export async function getFolderChat(folderId: string) {
   return request<Array<{ _id: string; userId: string; content: string; createdAt: string }>>("GET", `/folders/${folderId}/chat`);
 }
 
-export async function sendFolderMessage(folderId: string, content: string, attachments?: any[]) {
-  return request<{ _id: string; userId: string; content: string; createdAt: string; attachments?: any[] }>("POST", `/folders/${folderId}/chat`, { content, attachments });
+export async function sendFolderMessage(folderId: string, content: string, attachments?: any[], replyTo?: string, replyToContent?: string) {
+  return request<{ _id: string; userId: string; content: string; createdAt: string; attachments?: any[]; replyTo?: string; replyToContent?: string }>("POST", `/folders/${folderId}/chat`, { content, attachments, replyTo, replyToContent });
+}
+
+export async function deleteFolderMessage(folderId: string, messageId: string) {
+  return request<{ success: boolean }>("DELETE", `/folders/${folderId}/chat/${messageId}`);
 }
 
 export async function getFolderNotes(folderId: string) {

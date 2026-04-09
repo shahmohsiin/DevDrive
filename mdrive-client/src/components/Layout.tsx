@@ -14,7 +14,7 @@ import { useState } from "react";
 
 const navItems = [
   { to: "/", label: "Drive", icon: <LayoutDashboard size={18} /> },
-  { to: "/?sidebar=community", label: "Community", icon: <MessageSquare size={18} /> },
+  { to: "/?sidebar=community", label: "Chat", icon: <MessageSquare size={18} /> },
   { to: "/?sidebar=notes", label: "Notes", icon: <StickyNote size={18} /> },
 ];
 
@@ -63,7 +63,7 @@ export function Layout() {
               const isDashboard = item.to === "/";
               const hasSidebarParam = window.location.search.includes("sidebar=");
               
-              const isCommunityMatch = item.label === "Community" && window.location.search.includes("sidebar=community");
+              const isCommunityMatch = item.label === "Chat" && window.location.search.includes("sidebar=community");
               const isNotesMatch = item.label === "Notes" && window.location.search.includes("sidebar=notes");
               const isDashboardMatch = isDashboard && !hasSidebarParam;
               
