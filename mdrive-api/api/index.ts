@@ -11,6 +11,17 @@ async function getApp() {
 }
 
 export default async function handler(req: any, res: any) {
-  const app = await getApp();
-  app.server.emit("request", req, res);
+  try {
+    const app = await getApp();
+    app.server.emit("request", req, res);
+  } catch (err: any) {
+    console.error("CRITICAL STARTUP ERROR:", err);
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
+      error: "FUNCTION_INVOCATION_FAILED (caught)",
+      message: err?.message || String(err),
+      stack: err?.stack
+    }));
+  }
 }
