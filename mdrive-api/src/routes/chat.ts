@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ObjectId } from "mongodb";
-import { messagesCollection } from "../models/message.js";
-import { foldersCollection } from "../models/folder.js";
+import { messagesCollection } from "../models/message";
+import { foldersCollection } from "../models/folder";
 
 export default async function chatRoutes(app: FastifyInstance) {
   // Get chat messages for a folder

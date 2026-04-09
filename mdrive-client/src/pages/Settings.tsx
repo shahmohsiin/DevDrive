@@ -6,13 +6,7 @@ import { changePassword } from "../lib/api";
 import { 
   Loader2, 
   ShieldCheck, 
-  AlertTriangle, 
-  User, 
-  Cloud, 
-  Lock, 
-  Info,
-  Globe,
-  HardDrive
+  AlertTriangle
 } from "lucide-react";
 
 export function SettingsPage() {

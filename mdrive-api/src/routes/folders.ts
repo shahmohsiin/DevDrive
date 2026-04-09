@@ -1,9 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import { ObjectId } from "mongodb";
 import { nanoid } from "nanoid";
-import { foldersCollection, toFolderResponse } from "../models/folder.js";
-import { logActivity } from "../models/activity.js";
-import { requireAdmin, requireEditor } from "../plugins/rbac.js";
+import { foldersCollection, toFolderResponse } from "../models/folder";
+import { logActivity } from "../models/activity";
+import { requireAdmin, requireEditor } from "../plugins/rbac";
 
 export default async function folderRoutes(fastify: FastifyInstance) {
   // ─── POST /folders (admin/editor creates a folder) ────────

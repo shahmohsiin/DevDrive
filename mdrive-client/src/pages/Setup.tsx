@@ -9,7 +9,7 @@ import logo from "../logo.png";
 
 export function SetupPage() {
   const [step, setStep] = useState<"api" | "register">("api");
-  const [apiUrl, setApiUrl] = useState("http://localhost:3001");
+  const [apiUrl, setApiUrl] = useState("http://localhost:4001");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");

@@ -1,6 +1,6 @@
-import { getDb } from "../db.js";
+import { getDb } from "../db";
 import { ObjectId } from "mongodb";
-import type { ActivityLog, ActivityAction } from "../shared.js";
+import type { ActivityLog, ActivityAction } from "../shared";
 
 export interface ActivityDoc {
   _id: ObjectId;

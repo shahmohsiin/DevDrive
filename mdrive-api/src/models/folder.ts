@@ -1,6 +1,6 @@
-import { getDb } from "../db.js";
+import { getDb } from "../db";
 import { ObjectId } from "mongodb";
-import type { Folder, FolderPermission } from "../shared.js";
+import type { Folder, FolderPermission } from "../shared";
 
 export interface FolderDoc {
   _id: ObjectId;

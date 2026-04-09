@@ -1,13 +1,16 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { buildApp } from "../src/app.js";
+import { buildApp } from "../src/app";
 
-let app: Awaited<ReturnType<typeof buildApp>> | null = null;
+let appInstance: Awaited<ReturnType<typeof buildApp>> | null = null;
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (!app) {
-    app = await buildApp();
-    await app.ready();
+async function getApp() {
+  if (!appInstance) {
+    appInstance = await buildApp();
+    await appInstance.ready();
   }
+  return appInstance;
+}
 
+export default async function handler(req: any, res: any) {
+  const app = await getApp();
   app.server.emit("request", req, res);
 }

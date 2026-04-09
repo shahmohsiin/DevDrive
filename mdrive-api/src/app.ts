@@ -1,14 +1,14 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
-import authPlugin from "./plugins/auth.js";
-import authRoutes from "./routes/auth.js";
-import folderRoutes from "./routes/folders.js";
-import fileRoutes from "./routes/files.js";
-import activityRoutes from "./routes/activity.js";
-import chatRoutes from "./routes/chat.js";
-import notesRoutes from "./routes/notes.js";
-import { connectDb } from "./db.js";
+import authPlugin from "./plugins/auth";
+import authRoutes from "./routes/auth";
+import folderRoutes from "./routes/folders";
+import fileRoutes from "./routes/files";
+import activityRoutes from "./routes/activity";
+import chatRoutes from "./routes/chat";
+import notesRoutes from "./routes/notes";
+import { connectDb } from "./db";
 import dns from 'dns';
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 

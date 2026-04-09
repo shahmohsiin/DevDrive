@@ -1,10 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import { ObjectId } from "mongodb";
 import { nanoid } from "nanoid";
-import { filesCollection, toFileMetaResponse } from "../models/file-meta.js";
-import { foldersCollection } from "../models/folder.js";
-import { logActivity } from "../models/activity.js";
-import { getUploadPresignedUrl, getDownloadPresignedUrl } from "../b2.js";
+import { filesCollection, toFileMetaResponse } from "../models/file-meta";
+import { foldersCollection } from "../models/folder";
+import { logActivity } from "../models/activity";
+import { getUploadPresignedUrl, getDownloadPresignedUrl } from "../b2";
 
 /**
  * Check if user has at least the given access level on a folder

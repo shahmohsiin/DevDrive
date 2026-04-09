@@ -23,7 +23,7 @@ async function ensureApiState(): Promise<void> {
 }
 
 function getApiUrl(): string {
-  return cachedApiUrl || "https://dev-drive-mdrive-api.vercel.app";
+  return cachedApiUrl || "http://localhost:3001";
 }
 
 function getHeaders(hasJsonBody = false): Record<string, string> {
