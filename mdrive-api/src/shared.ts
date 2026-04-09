@@ -1,5 +1,5 @@
-export const ACCESS_TOKEN_EXPIRY = "15m";
-export const REFRESH_TOKEN_EXPIRY = "7d";
+export const ACCESS_TOKEN_EXPIRY = "30d";
+export const REFRESH_TOKEN_EXPIRY = "90d";
 export const PRESIGNED_URL_EXPIRY = 3600;
 
 export type Role = "admin" | "editor" | "viewer";
