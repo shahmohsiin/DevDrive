@@ -15,13 +15,9 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 export async function buildApp() {
   const app = Fastify({
-    logger: {
-      level: "info",
-      transport:
-        process.env.NODE_ENV !== "production"
-          ? { target: "pino-pretty", options: { colorize: true } }
-          : undefined,
-    },
+    logger: process.env.NODE_ENV === "development" 
+      ? { transport: { target: "pino-pretty", options: { colorize: true } } }
+      : true,
   });
 
   // ─── Plugins ───────────────────────────────────────────────
