@@ -7,7 +7,10 @@
     "packages/*"
   ],
   "scripts": {
+    "build:shared": "npm run build --workspace=@mdrive/shared",
     "build:api": "npm run build --workspace=mdrive-api",
+    "build": "npm run build:shared && npm run build:api",
+    "vercel-build": "npm run build:shared",
     "dev:api": "npm run dev --workspace=mdrive-api"
   }
 }
