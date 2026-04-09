@@ -1,7 +1,7 @@
 import fp from "fastify-plugin";
 import fjwt from "@fastify/jwt";
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { config } from "../config";
+import { config } from "../config.js";
 
 // Extend Fastify types
 declare module "fastify" {

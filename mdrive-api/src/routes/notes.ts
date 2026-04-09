@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ObjectId } from "mongodb";
-import { notesCollection } from "../models/note";
-import { foldersCollection } from "../models/folder";
+import { notesCollection } from "../models/note.js";
+import { foldersCollection } from "../models/folder.js";
 
 export default async function notesRoutes(app: FastifyInstance) {
   // Get all notes for a folder/context

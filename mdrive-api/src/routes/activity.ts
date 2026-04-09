@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { ObjectId } from "mongodb";
-import { activityCollection, toActivityResponse } from "../models/activity";
+import { activityCollection, toActivityResponse } from "../models/activity.js";
 
 export default async function activityRoutes(fastify: FastifyInstance) {
   // ─── GET /activity/:folderId ──────────────────────────────

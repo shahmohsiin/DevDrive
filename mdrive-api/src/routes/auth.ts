@@ -1,10 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
-import { usersCollection, toUserResponse } from "../models/user";
-import { logActivity } from "../models/activity";
-import { requireAdmin } from "../plugins/rbac";
-import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../shared";
+import { usersCollection, toUserResponse } from "../models/user.js";
+import { logActivity } from "../models/activity.js";
+import { requireAdmin } from "../plugins/rbac.js";
+import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../shared.js";
 
 export default async function authRoutes(fastify: FastifyInstance) {
   // ─── POST /auth/login ─────────────────────────────────────

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { getDb } from "../db";
+import { getDb } from "../db.js";
 
 export interface NoteDoc {
   _id?: ObjectId;
