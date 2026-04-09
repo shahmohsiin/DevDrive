@@ -58,7 +58,8 @@ async function request<T>(
 ): Promise<{ success: boolean; data?: T; error?: string }> {
   await ensureApiState();
 
-  const url = `${getApiUrl()}${path}`;
+    const baseUrl = getApiUrl().endsWith('/') ? getApiUrl().slice(0, -1) : getApiUrl();
+    const url = `${baseUrl}${path}`;
   const hasBody = body !== undefined && method !== "GET";
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 15000);
