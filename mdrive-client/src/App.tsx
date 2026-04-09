@@ -5,6 +5,7 @@ import { LoginPage } from "./pages/Login";
 import { SetupPage } from "./pages/Setup";
 import { DashboardPage } from "./pages/Dashboard";
 import { AdminUsersPage } from "./pages/AdminUsers";
+import { AdminSettingsPage } from "./pages/AdminSettings";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       >
         <Route path="/" element={<DashboardPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/admin/settings" element={<AdminSettingsPage />} />
       </Route>
     </Routes>
   );

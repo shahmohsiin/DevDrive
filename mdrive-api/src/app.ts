@@ -8,6 +8,8 @@ import fileRoutes from "./routes/files.js";
 import activityRoutes from "./routes/activity.js";
 import chatRoutes from "./routes/chat.js";
 import notesRoutes from "./routes/notes.js";
+import settingsRoutes from "./routes/settings.js";
+import { seedSettings } from "./models/settings.js";
 import { connectDb } from "./db.js";
 import dns from 'dns';
 dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -37,6 +39,7 @@ export async function buildApp() {
 
   // ─── Database ──────────────────────────────────────────────
   await connectDb();
+  await seedSettings();
 
   // ─── Routes ────────────────────────────────────────────────
   await app.register(authRoutes);
@@ -45,6 +48,7 @@ export async function buildApp() {
   await app.register(activityRoutes);
   await app.register(chatRoutes);
   await app.register(notesRoutes);
+  await app.register(settingsRoutes);
 
   // ─── Health Check ──────────────────────────────────────────
   app.get("/health", async () => {

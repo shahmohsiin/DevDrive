@@ -1,7 +1,7 @@
 [package]
-name = "mdrive-client"
+name = "devdrive"
 version = "0.1.0"
-description = "m-drive — Cloud file sync desktop client"
+description = "DevDrive — Cloud file sync desktop client"
 authors = ["you"]
 edition = "2021"
 

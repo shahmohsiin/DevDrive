@@ -206,8 +206,16 @@ export async function createNote(folderId: string, content: string) {
   return request<{ success: boolean; data: any }>("POST", `/folders/${folderId}/notes`, { content });
 }
 
-export async function updateNote(noteId: string, content: string) {
-  return request<{ success: boolean; data: any }>("PATCH", `/notes/${noteId}`, { content });
+export async function updateNote(id: string, content: string) {
+  return request<{ _id: string; content: string }>("PATCH", `/notes/${id}`, { content });
+}
+
+export async function getAppSettings() {
+  return request<{ tagline: string }>("GET", "/settings");
+}
+
+export async function updateAppSettings(data: { tagline: string }) {
+  return request<{ success: boolean; data: { tagline: string } }>("PATCH", "/settings", data);
 }
 
 export async function deleteNote(noteId: string) {

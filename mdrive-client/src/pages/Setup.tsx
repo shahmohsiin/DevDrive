@@ -5,6 +5,8 @@ import { updateConfig } from "../lib/tauri";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, Server, HelpCircle } from "lucide-react";
 import { Titlebar } from "../components/Titlebar";
+import { useEffect } from "react";
+import { getAppSettings } from "../lib/api";
 import logo from "../logo.png";
 
 export function SetupPage() {
@@ -15,8 +17,21 @@ export function SetupPage() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tagline, setTagline] = useState("For Developers");
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await getAppSettings();
+        if (res.data) setTagline(res.data.tagline);
+      } catch (err) {
+        console.error("Failed to fetch settings:", err);
+      }
+    }
+    fetchSettings();
+  }, []);
 
   async function handleApiSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -90,7 +105,7 @@ export function SetupPage() {
               Connect to Your <br /> Cloud <span className="text-indigo-500">Workspace.</span>
             </motion.h2>
             <p className="text-sm text-text-muted font-medium max-w-sm leading-relaxed">
-              Link your desktop client to your secure codebase and data migration server.
+              {tagline} — Secure codebase and data store.
             </p>
           </div>
 

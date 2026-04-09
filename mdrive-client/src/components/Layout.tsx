@@ -10,7 +10,9 @@ import {
 import { useAuth } from "../hooks/useAuth";
 import { Titlebar } from "./Titlebar";
 import { ChangePasswordModal } from "./ChangePasswordModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Settings as SettingsIcon } from "lucide-react";
+import { getAppSettings } from "../lib/api";
 
 const navItems = [
   { to: "/", label: "Drive", icon: <LayoutDashboard size={18} /> },
@@ -18,13 +20,35 @@ const navItems = [
   { to: "/?sidebar=notes", label: "Notes", icon: <StickyNote size={18} /> },
 ];
 
-const adminItems = [{ to: "/admin/users", label: "Users", icon: <Users size={18} /> }];
+const adminItems = [
+  { to: "/admin/users", label: "Users", icon: <Users size={18} /> },
+  { to: "/admin/settings", label: "Settings", icon: <SettingsIcon size={18} /> },
+];
 
 export function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showResetPassword, setShowResetPassword] = useState(false);
+  const [tagline, setTagline] = useState("For Developers");
   const isAdmin = user?.role === "admin";
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await getAppSettings();
+        if (res.data) setTagline(res.data.tagline);
+      } catch (err) {
+        console.error("Failed to fetch settings:", err);
+      }
+    }
+    fetchSettings();
+
+    const handleUpdate = (e: any) => {
+      if (e.detail?.tagline) setTagline(e.detail.tagline);
+    };
+    window.addEventListener("settings-updated", handleUpdate);
+    return () => window.removeEventListener("settings-updated", handleUpdate);
+  }, []);
 
   async function handleLogout() {
     await logout();
@@ -51,8 +75,8 @@ export function Layout() {
                 <h1 className="text-lg font-bold gradient-text tracking-tighter">
                   DevDrive
                 </h1>
-                <p className="text-[10px] text-text-muted uppercase tracking-widest font-semibold">
-                  For Developers
+                <p className="text-[10px] text-text-muted uppercase tracking-widest font-semibold truncate max-w-[120px]">
+                  {tagline}
                 </p>
               </div>
             </div>

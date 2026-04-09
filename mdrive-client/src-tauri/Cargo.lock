@@ -735,6 +735,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "devdrive"
+version = "0.1.0"
+dependencies = [
+ "async-stream",
+ "bytes",
+ "dirs",
+ "futures-util",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-opener",
+ "tokio",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2161,26 +2181,6 @@ name = "matches"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2532096657941c2fea9c289d370a250971c689d4f143798ff67113ec042024a5"
-
-[[package]]
-name = "mdrive-client"
-version = "0.1.0"
-dependencies = [
- "async-stream",
- "bytes",
- "dirs",
- "futures-util",
- "reqwest 0.12.28",
- "serde",
- "serde_json",
- "sha2",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-opener",
- "tokio",
-]
 
 [[package]]
 name = "memchr"
