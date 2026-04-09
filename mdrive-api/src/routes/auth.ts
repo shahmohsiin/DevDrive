@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 import { usersCollection, toUserResponse } from "../models/user.js";
 import { logActivity } from "../models/activity.js";
 import { requireAdmin } from "../plugins/rbac.js";
-import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../shared/index.js";
+import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "../shared.js";
 
 export default async function authRoutes(fastify: FastifyInstance) {
   // ─── POST /auth/login ─────────────────────────────────────

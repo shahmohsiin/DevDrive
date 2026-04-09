@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import type { Role } from "../shared/index.js";
+import type { Role } from "../shared.js";
 
 /**
  * Creates a preHandler that checks if the authenticated user has one of the allowed roles.

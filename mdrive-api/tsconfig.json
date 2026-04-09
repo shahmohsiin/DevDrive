@@ -11,10 +11,7 @@
     "declaration": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "baseUrl": ".",
-    "paths": {
-      "@mdrive/shared": ["./src/shared/index.ts"]
-    }
+    "baseUrl": "."
   },
   "include": ["src", "api"],
   "exclude": ["node_modules", "dist"]
