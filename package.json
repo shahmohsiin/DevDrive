@@ -1,0 +1,13 @@
+{
+  "name": "mdrive-monorepo",
+  "private": true,
+  "workspaces": [
+    "mdrive-api",
+    "mdrive-client",
+    "packages/*"
+  ],
+  "scripts": {
+    "build:api": "npm run build --workspace=mdrive-api",
+    "dev:api": "npm run dev --workspace=mdrive-api"
+  }
+}
