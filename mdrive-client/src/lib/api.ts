@@ -23,7 +23,7 @@ async function ensureApiState(): Promise<void> {
 }
 
 function getApiUrl(): string {
-  return cachedApiUrl || "http://localhost:4001";
+  return cachedApiUrl || "https://dev-drive-mdrive-api.vercel.app";
 }
 
 function getHeaders(hasJsonBody = false): Record<string, string> {
@@ -58,8 +58,8 @@ async function request<T>(
 ): Promise<{ success: boolean; data?: T; error?: string }> {
   await ensureApiState();
 
-    const baseUrl = getApiUrl().endsWith('/') ? getApiUrl().slice(0, -1) : getApiUrl();
-    const url = `${baseUrl}${path}`;
+  const baseUrl = getApiUrl().endsWith('/') ? getApiUrl().slice(0, -1) : getApiUrl();
+  const url = `${baseUrl}${path}`;
   const hasBody = body !== undefined && method !== "GET";
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 15000);
@@ -125,15 +125,15 @@ export async function register(params: {
 }) {
   return request<
     | {
-        _id: string;
-        email: string;
-        displayName: string;
-        role: string;
-      }
+      _id: string;
+      email: string;
+      displayName: string;
+      role: string;
+    }
     | {
-        user: { _id: string; email: string; displayName: string; role: string };
-        tokens: { accessToken: string; refreshToken: string };
-      }
+      user: { _id: string; email: string; displayName: string; role: string };
+      tokens: { accessToken: string; refreshToken: string };
+    }
   >("POST", "/auth/register", params);
 }
 

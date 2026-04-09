@@ -238,36 +238,32 @@ export function NotesSidebar({ folderId, onClose }: NotesSidebarProps) {
             <p className="text-[10px] font-medium text-text-muted/40 tracking-wide">Submit your first note to begin documentation.</p>
           </div>
         ) : (
-          <div className="flex flex-col">
+          <div className="flex flex-col p-4 space-y-4">
             <AnimatePresence initial={false}>
               {notes.map((note, index) => {
                 const colors = [
-                  'border-blue-500/50 text-blue-400',
-                  'border-emerald-500/50 text-emerald-400',
-                  'border-amber-500/50 text-amber-400',
-                  'border-rose-500/50 text-rose-400',
-                  'border-violet-500/50 text-violet-400',
-                  'border-cyan-500/50 text-cyan-400'
+                  'border-blue-500/30 text-blue-400 bg-blue-500/[0.02]',
+                  'border-emerald-500/30 text-emerald-400 bg-emerald-500/[0.02]',
+                  'border-amber-500/30 text-amber-400 bg-amber-500/[0.02]',
+                  'border-rose-500/30 text-rose-400 bg-rose-500/[0.02]',
+                  'border-violet-500/30 text-violet-400 bg-violet-500/[0.02]',
+                  'border-cyan-500/30 text-cyan-400 bg-cyan-500/[0.02]'
                 ];
-                const colorClass = colors[index % colors.length];
-                const borderColor = colorClass.split(' ')[0];
-                const textColor = colorClass.split(' ')[1];
+                const colorConfig = colors[index % colors.length];
+                const [borderColor, textColor, bgColor] = colorConfig.split(' ');
 
                 return (
                   <motion.div 
                     key={note._id}
                     layout
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className={`group/note relative p-6 border-b border-white/5 transition-colors hover:bg-white/[0.02]`}
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className={`group/note relative p-5 rounded-2xl border ${borderColor} ${bgColor} transition-all hover:bg-white/[0.05] hover:border-white/20`}
                   >
-                    {/* Color Accent Indicator */}
-                    <div className={`absolute left-0 top-6 bottom-6 w-1 rounded-r-full border-r-2 ${borderColor} opacity-40 group-hover/note:opacity-100 transition-opacity`} />
-
-                    <div className="flex items-center justify-between mb-3 pl-2">
-                      <div className={`flex items-center gap-2 text-[9px] font-black uppercase tracking-widest ${textColor} opacity-60`}>
-                        <Clock size={10} />
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${textColor} opacity-50 group-hover/note:opacity-100 transition-opacity`}>
+                        <Clock size={12} />
                         {formatDate(note.createdAt)}
                       </div>
                       <div className="flex items-center gap-1 opacity-0 group-hover/note:opacity-100 transition-opacity">
@@ -276,44 +272,44 @@ export function NotesSidebar({ folderId, onClose }: NotesSidebarProps) {
                             setEditingNoteId(note._id);
                             setEditingContent(note.content);
                           }}
-                          className="p-1.5 hover:bg-white/5 rounded-lg text-text-muted hover:text-blue-400 transition-all"
+                          className="p-1.5 hover:bg-white/10 rounded-xl text-text-muted hover:text-blue-400 transition-all border border-transparent hover:border-white/10"
                         >
-                          <Edit2 size={12} />
+                          <Edit2 size={13} />
                         </button>
                         <button 
                           onClick={() => handleDeleteNote(note._id)}
-                          className="p-1.5 hover:bg-rose-500/10 rounded-lg text-text-muted hover:text-rose-500 transition-all"
+                          className="p-1.5 hover:bg-rose-500/20 rounded-xl text-text-muted hover:text-rose-500 transition-all border border-transparent hover:border-white/10"
                         >
-                          <Trash2 size={12} />
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </div>
 
                     {editingNoteId === note._id ? (
-                      <div className="space-y-3 pl-2">
+                      <div className="space-y-4">
                         <textarea 
                           value={editingContent}
                           onChange={(e) => setEditingContent(e.target.value)}
-                          className="w-full bg-black/20 border border-accent-blue/30 rounded-xl p-3 text-[13px] font-medium text-text-primary outline-none focus:bg-black/30 transition-all resize-none min-h-[100px]"
+                          className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-[14px] font-medium text-text-primary outline-none focus:border-accent-blue/50 transition-all resize-none min-h-[120px]"
                           autoFocus
                         />
                         <div className="flex items-center gap-2">
                           <button 
                             onClick={handleUpdateNote}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-accent-blue text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-all"
+                            className="flex items-center gap-2 px-4 py-2 bg-accent-blue text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all"
                           >
-                            <Save size={12} /> Sync Update
+                            <Save size={14} /> Update Sync
                           </button>
                           <button 
                             onClick={() => setEditingNoteId(null)}
-                            className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-text-muted hover:bg-white/5 transition-all"
+                            className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-text-muted hover:bg-white/10 transition-all"
                           >
                             Cancel
                           </button>
                         </div>
                       </div>
                     ) : (
-                      <p className="pl-2 text-[13px] font-medium text-text-secondary leading-relaxed whitespace-pre-wrap break-words tracking-wide group-hover/note:text-text-primary transition-colors">
+                      <p className="text-[14px] font-medium text-text-secondary leading-relaxed whitespace-pre-wrap break-words tracking-wide group-hover/note:text-text-primary transition-colors">
                         {note.content}
                       </p>
                     )}

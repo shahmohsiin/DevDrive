@@ -1,6 +1,6 @@
 import { getDb } from "../db.js";
 import { ObjectId } from "mongodb";
-import type { FileMeta, FileRevision } from "@mdrive/shared";
+import type { FileMeta, FileRevision } from "../shared/index.js";
 
 export interface FileRevisionDoc {
   version: number;

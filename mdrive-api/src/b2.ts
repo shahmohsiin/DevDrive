@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { config } from "./config.js";
-import { PRESIGNED_URL_EXPIRY } from "@mdrive/shared";
+import { PRESIGNED_URL_EXPIRY } from "./shared/index.js";
 
 const s3 = new S3Client({
   region: "auto",

@@ -1,6 +1,6 @@
 import { getDb } from "../db.js";
 import { ObjectId } from "mongodb";
-import type { User } from "@mdrive/shared";
+import type { User } from "../shared/index.js";
 
 export interface UserDoc {
   _id: ObjectId;

@@ -1,6 +1,6 @@
 import { getDb } from "../db.js";
 import { ObjectId } from "mongodb";
-import type { Folder, FolderPermission } from "@mdrive/shared";
+import type { Folder, FolderPermission } from "../shared/index.js";
 
 export interface FolderDoc {
   _id: ObjectId;
