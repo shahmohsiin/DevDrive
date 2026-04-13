@@ -5,6 +5,35 @@ import { foldersCollection, toFolderResponse } from "../models/folder.js";
 import { logActivity } from "../models/activity.js";
 import { requireAdmin, requireEditor } from "../plugins/rbac.js";
 
+/**
+ * Checks if a user has explicit or inherited access to a folder.
+ */
+async function hasFolderAccess(folderId: ObjectId, userId: ObjectId, isAdmin: boolean): Promise<boolean> {
+  if (isAdmin) return true;
+
+  let currentId: ObjectId | null = folderId;
+  
+  // Basic recursive check. For extremely deep trees, a more optimized path-based approach is better,
+  // but for standard use this is robust.
+  while (currentId) {
+    const folder = await foldersCollection().findOne({ _id: currentId });
+    if (!folder) break;
+
+    const hasExplicitPermission = folder.permissions.some(
+      (p) => p.userId.equals(userId)
+    );
+    
+    // Also check if owner
+    if (folder.ownerId.equals(userId) || hasExplicitPermission) {
+      return true;
+    }
+
+    currentId = folder.parentId;
+  }
+
+  return false;
+}
+
 export default async function folderRoutes(fastify: FastifyInstance) {
   // ─── POST /folders (admin/editor creates a folder) ────────
   fastify.post(
@@ -83,11 +112,15 @@ export default async function folderRoutes(fastify: FastifyInstance) {
 
       const parentFilter = parentId ? new ObjectId(parentId) : null;
 
-      // Admin sees all folders at this level; others see only explicitly assigned folders at this level
-      // Note: In a full implementation, we'd check recursive permissions.
+      // Check if user has inherited access to the parent folder
+      let hasInheritedAccess = false;
+      if (parentFilter) {
+        hasInheritedAccess = await hasFolderAccess(parentFilter, userId, isAdmin);
+      }
+
       const filter: any = { parentId: parentFilter };
       
-      if (!isAdmin) {
+      if (!isAdmin && !hasInheritedAccess) {
         filter["permissions.userId"] = userId;
       }
 
@@ -120,14 +153,12 @@ export default async function folderRoutes(fastify: FastifyInstance) {
           .send({ success: false, error: "Folder not found" });
       }
 
-      // Check access
-      const userId = request.user.userId;
+      // Check access recursively
+      const userId = new ObjectId(request.user.userId);
       const isAdmin = request.user.role === "admin";
-      const hasPermission = folder.permissions.some(
-        (p) => p.userId.toHexString() === userId
-      );
+      const hasAccess = await hasFolderAccess(folder._id, userId, isAdmin);
 
-      if (!isAdmin && !hasPermission) {
+      if (!hasAccess) {
         return reply
           .status(403)
           .send({ success: false, error: "Access denied" });

@@ -57,10 +57,15 @@ import { useAuth } from "../hooks/useAuth";
 import { HistorySidebar } from "../components/HistorySidebar";
 import { CommunitySidebar } from "../components/CommunitySidebar";
 import { NotesSidebar } from "../components/NotesSidebar";
-import { FileIcon } from "../components/FileIcon";
 import { FilePreviewModal } from "../components/FilePreviewModal";
 import { ManageAccessModal } from "../components/ManageAccessModal";
 import { DeleteConfirmationModal } from "../components/DeleteConfirmationModal";
+
+// Optimized Dashboard Components
+import { Breadcrumbs } from "../components/Dashboard/Breadcrumbs";
+import { FolderList } from "../components/Dashboard/FolderList";
+import { FileList } from "../components/Dashboard/FileList";
+import { TransferMonitor } from "../components/Dashboard/TransferMonitor";
 
 interface FolderItem {
   _id: string;
@@ -770,39 +775,12 @@ export function DashboardPage() {
   return (
     <div className="h-full flex flex-col bg-surface-primary text-text-primary relative overflow-hidden">
       <header className="px-4 md:px-6 py-4 border-b border-border-default flex items-center justify-between glass sticky top-0 z-40 bg-surface-primary/80 backdrop-blur-md gap-4">
-        <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0 overflow-hidden">
-          <button 
-            onClick={goToRoot}
-            className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all"
-          >
-            <HardDrive size={20} />
-          </button>
-          
-          <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mask-fade-right py-1">
-              <button 
-                onClick={() => setFolderPath([])}
-                className="flex items-center gap-2 px-1 hover:text-blue-400 transition-colors group"
-              >
-                <span className={`text-[10px] font-black uppercase tracking-[0.25em] ${folderPath.length === 0 ? 'text-text-primary' : 'text-text-muted opacity-40'}`}>
-                  M-Drive
-                </span>
-              </button>
-
-              {folderPath.map((folder, index) => (
-                <div key={folder._id} className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10px] text-text-muted opacity-20 font-light">/</span>
-                  <button
-                    onClick={() => navigateToBreadcrumb(index)}
-                    className={`px-1 text-[10px] font-black uppercase tracking-[0.25em] transition-all hover:text-blue-400 ${index === folderPath.length - 1 ? 'text-text-primary opacity-100' : 'text-text-muted opacity-40 hover:opacity-100'}`}
-                  >
-                    {folder.name}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <Breadcrumbs 
+          folderPath={folderPath} 
+          goToRoot={goToRoot} 
+          navigateToBreadcrumb={navigateToBreadcrumb} 
+          setFolderPath={setFolderPath} 
+        />
 
         <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
           <div className="relative group hidden sm:block">
@@ -951,44 +929,17 @@ export function DashboardPage() {
             </div>
           ) : (
             <div className="h-full flex flex-col space-y-8">
-              {filteredFolders.length > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] px-1">Sub-Folders</h3>
-                  <motion.div layout className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-                    {filteredFolders.map(f => (
-                      <motion.div
-                        layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                        key={f._id} onClick={() => selectFolder(f)}
-                        onContextMenu={(e) => {
-                          e.preventDefault();
-                          setContextMenu({ x: e.clientX, y: e.clientY, item: f, type: 'folder' });
-                        }}
-                        className="group relative bg-surface-secondary rounded-[32px] p-6 border border-border-default hover:border-blue-500/30 transition-all cursor-pointer hover:shadow-2xl hover:-translate-y-1"
-                      >
-                         <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5">
-                            {isFolderEditor && (
-                              <button onClick={(e) => { e.stopPropagation(); setShowRename({ id: f._id, name: f.name, type: 'folder' }); setRenameValue(f.name); }} className="p-1.5 rounded-md hover:bg-white/10 text-text-secondary"><Pencil size={12} /></button>
-                            )}
-                            {isAdmin && (
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); setShowManageAccess({ id: f._id, name: f.name, permissions: f.permissions }); }} 
-                                className="p-1.5 rounded-md hover:bg-blue-500/20 text-blue-400"
-                                title="Manage Access"
-                              >
-                                <UsersIcon size={12} />
-                              </button>
-                            )}
-                            {isAdmin && (
-                              <button onClick={(e) => { e.stopPropagation(); handleDeleteFolder(f._id); }} className="p-1.5 rounded-md hover:bg-rose-500/20 text-rose-400"><Trash2 size={12} /></button>
-                            )}
-                          </div>
-                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-4"><Folder size={24} /></div>
-                        <h3 className="text-sm font-semibold text-text-primary truncate">{f.name}</h3>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </div>
-              )}
+              <FolderList 
+                folders={filteredFolders}
+                isFolderEditor={isFolderEditor}
+                isAdmin={isAdmin}
+                selectFolder={selectFolder}
+                setShowRename={setShowRename}
+                setRenameValue={setRenameValue}
+                setShowManageAccess={setShowManageAccess}
+                handleDeleteFolder={handleDeleteFolder}
+                setContextMenu={setContextMenu}
+              />
 
               {selectedFolder && (
                 <div className="space-y-4 pt-4">
@@ -997,80 +948,19 @@ export function DashboardPage() {
                     <div className="text-[10px] font-bold text-text-muted/50 uppercase tracking-widest">{filteredFiles.length} Storage Nodes</div>
                   </div>
                   
-                  {filesLoading ? (
-                    <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 text-blue-500 animate-spin" /></div>
-                  ) : filteredFiles.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-12 border border-dashed border-border-default rounded-2xl bg-white/5">
-                      <div className="w-12 h-12 rounded-full bg-surface-secondary flex items-center justify-center text-text-muted mb-4">
-                        <HardDrive size={24} />
-                      </div>
-                      <p className="text-xs font-bold text-text-muted uppercase tracking-widest">No objects in this layer</p>
-                    </div>
-                  ) : viewMode === 'list' ? (
-                    <div className="bg-surface-secondary rounded-2xl border border-border-default overflow-hidden">
-                      <table className="w-full text-left text-xs text-text-secondary">
-                        <thead className="bg-black/5">
-                          <tr>
-                            <th className="px-6 py-4">Name</th><th className="px-6 py-4">Size</th><th className="px-6 py-4 text-right">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border-default">
-                          {filteredFiles.map(file => (
-                            <tr key={file._id} className="group hover:bg-white/5" onContextMenu={(e) => { e.preventDefault(); setContextMenu({ x: e.clientX, y: e.clientY, item: file, type: 'file' }); }}>
-                              <td className="px-6 py-4 flex items-center gap-3"><FileIcon fileName={file.fileName} className="text-blue-400" />{file.fileName}</td>
-                              <td className="px-6 py-4">{formatSize(file.size)}</td>
-                              <td className="px-6 py-4 text-right">
-                                 <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100">
-                                    <button onClick={() => handleView(file)} className="p-2 text-blue-400"><Eye size={14} /></button>
-                                    <button onClick={() => handleDownload(file)} className="p-2 text-emerald-400"><Download size={14} /></button>
-                                    {isFolderEditor && <button onClick={() => handleDeleteFile(file._id)} className="p-2 text-rose-500"><X size={16} /></button>}
-                                 </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <motion.div layout className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-                      {filteredFiles.map(file => (
-                        <motion.div
-                          layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                          key={file._id} 
-                          onContextMenu={(e) => { e.preventDefault(); setContextMenu({ x: e.clientX, y: e.clientY, item: file, type: 'file' }); }}
-                          className="group relative bg-surface-secondary rounded-[32px] p-6 border border-border-default hover:border-blue-500/30 transition-all cursor-pointer hover:shadow-2xl hover:-translate-y-1"
-                        >
-                          <div className="flex justify-between mb-4">
-                            <FileIcon fileName={file.fileName} size={24} className="text-blue-400" />
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100">
-                              <button onClick={() => handleView(file)} className="p-1 hover:text-blue-400" title="View"><Eye size={14} /></button>
-                              <button onClick={() => handleDownload(file)} className="p-1 hover:text-emerald-400" title="Download"><Download size={14} /></button>
-                              {isFolderEditor && (
-                                <button 
-                                  onClick={(e) => { e.stopPropagation(); setShowRename({ id: file._id, name: file.fileName, type: 'file' }); setRenameValue(file.fileName); }} 
-                                  className="p-1 hover:text-blue-400"
-                                  title="Rename"
-                                >
-                                  <Pencil size={12} />
-                                </button>
-                              )}
-                              {isFolderEditor && (
-                                <button 
-                                  onClick={(e) => { e.stopPropagation(); handleDeleteFile(file._id); }} 
-                                  className="p-1 hover:text-rose-500"
-                                  title="Delete"
-                                >
-                                  <X size={14} />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                          <h4 className="text-xs font-semibold text-text-primary truncate">{file.fileName}</h4>
-                          <span className="text-[10px] text-text-muted">{formatSize(file.size)}</span>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  )}
+                  <FileList 
+                    files={filteredFiles}
+                    filesLoading={filesLoading}
+                    viewMode={viewMode}
+                    isFolderEditor={isFolderEditor}
+                    handleView={handleView}
+                    handleDownload={handleDownload}
+                    handleDeleteFile={handleDeleteFile}
+                    setShowRename={setShowRename}
+                    setRenameValue={setRenameValue}
+                    setContextMenu={setContextMenu}
+                    formatSize={formatSize}
+                  />
                 </div>
               )}
             </div>
@@ -1089,66 +979,11 @@ export function DashboardPage() {
         </AnimatePresence>
       </main>
 
-      <AnimatePresence>
-        {activeTransfersList.length > 0 && (
-          <motion.div 
-            initial={{ y: -50, opacity: 0, x: "-50%" }} 
-            animate={{ y: 0, opacity: 1, x: "-50%" }} 
-            exit={{ y: -50, opacity: 0, x: "-50%" }} 
-            className="fixed top-24 left-1/2 z-[100] flex flex-col items-center gap-3 w-80 pointer-events-none"
-          >
-            {activeTransfersList.map(t => (
-              <motion.div 
-                key={t.id} 
-                layout
-                initial={{ x: 50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 50, opacity: 0 }}
-                className="pointer-events-auto w-full bg-surface-secondary/20 backdrop-blur-3xl rounded-[20px] p-4 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] border border-white/5 relative overflow-hidden group"
-              >
-                <motion.div 
-                  initial={{ width: 0 }} 
-                  animate={{ width: `${t.percentage}%` }} 
-                  className={`absolute top-0 left-0 h-[2px] opacity-70 transition-all duration-300 ${t.status === 'error' ? 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]' : t.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]'}`} 
-                />
-                
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${t.status === 'completed' ? 'bg-emerald-500/10 text-emerald-400' : t.status === 'error' ? 'bg-rose-500/10 text-rose-400' : 'bg-blue-600 shadow-lg shadow-blue-500/20 text-white'}`}>
-                    {t.status === 'completed' ? <CheckCircle2 size={14} /> : t.status === 'error' ? <AlertCircle size={14} /> : <Loader2 className="animate-spin" size={14} />}
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-center mb-0.5">
-                      <span className="text-[10px] font-black text-text-primary truncate tracking-wider uppercase">
-                        {t.fileName}
-                      </span>
-                      {t.status !== 'completed' && t.status !== 'error' && (
-                        <span className="text-[9px] font-black text-blue-400 tabular-nums">
-                          {Math.round(t.percentage)}%
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <div className="text-[9px] text-text-muted font-bold tracking-tight opacity-60">
-                        {t.status === 'completed' ? 'SYNCED' : t.status === 'error' ? 'FAILED' : `${formatSize(t.bytesTransferred)} / ${formatSize(t.totalBytes)}`}
-                      </div>
-                      {t.type === "upload" && (t.status === "pending" || t.status === "progress") && (
-                        <button
-                          onClick={() => handleCancelUpload(t.id)}
-                          className="text-[8px] font-black text-rose-400 hover:text-rose-300 uppercase tracking-[0.2em] transition-colors"
-                        >
-                          ABORT
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <TransferMonitor 
+        transfers={activeTransfersList} 
+        handleCancelUpload={handleCancelUpload} 
+        formatSize={formatSize} 
+      />
 
       {showNewFolder && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]">

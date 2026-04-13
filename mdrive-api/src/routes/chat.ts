@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { ObjectId } from "mongodb";
-import { messagesCollection } from "../models/message.js";
+import { messagesCollection, FolderMessageDoc } from "../models/message.js";
 import { foldersCollection } from "../models/folder.js";
 
 export default async function chatRoutes(app: FastifyInstance) {
@@ -56,6 +56,7 @@ export default async function chatRoutes(app: FastifyInstance) {
       replyTo?: string;
       replyToContent?: string;
     };
+    const { id: folderIdStr } = request.params as { id: string };
     const userId = request.user.userId;
 
     if (!content || content.trim().length === 0) {
