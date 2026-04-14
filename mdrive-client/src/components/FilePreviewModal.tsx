@@ -14,7 +14,7 @@ import {
   Save,
 } from "lucide-react";
 import { CodeEditor } from "./CodeEditor";
-import { getUploadUrl, confirmUpload } from "../lib/api";
+import { getUploadUrl, confirmUpload, getFileContent } from "../lib/api";
 
 interface FilePreviewModalProps {
   isOpen: boolean;
@@ -45,17 +45,18 @@ export function FilePreviewModal({
   const [saveLoading, setSaveLoading] = useState(false);
   const [previewMode, setPreviewMode] = useState<'source' | 'live'>('source');
   const containerRef = useRef<HTMLDivElement>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const isImage = mimeType.startsWith("image/");
   const isPDF = mimeType === "application/pdf";
-  const isText = mimeType.startsWith("text/") || mimeType === "application/json" || fileName.endsWith(".ts") || fileName.endsWith(".tsx") || fileName.endsWith(".md");
+  const isText = mimeType.startsWith("text/") || mimeType === "application/json" || fileName.endsWith(".ts") || fileName.endsWith(".tsx") || fileName.endsWith(".md") || fileName.endsWith(".txt") || fileName.endsWith(".html");
   const isHTML = mimeType === "text/html" || fileName.endsWith(".html");
 
   useEffect(() => {
     if (isOpen && isText) {
       setLoadingText(true);
-      fetch(downloadUrl)
-        .then(res => res.text())
+      setFetchError(null);
+      getFileContent(fileId)
         .then(text => {
           setTextContent(text);
           setEditedContent(text);
@@ -63,14 +64,16 @@ export function FilePreviewModal({
         })
         .catch(err => {
           console.error("Failed to load text content:", err);
+          setFetchError(err instanceof Error ? err.message : "Possible CORS or Network Error");
           setLoadingText(false);
         });
     } else {
       setTextContent(null);
       setIsEditing(false);
+      setFetchError(null);
     }
     setZoom(1);
-  }, [isOpen, isText, downloadUrl]);
+  }, [isOpen, isText, fileId]);
 
   async function calculateHash(content: string): Promise<string> {
     const encoder = new TextEncoder();
@@ -279,7 +282,21 @@ export function FilePreviewModal({
                           <div className="p-8 font-mono text-[13px] text-gray-300 leading-relaxed">
                             {loadingText ? (
                               <div className="flex flex-col items-center justify-center h-64 gap-3 text-gray-600 italic">
+                                <RotateCcw className="animate-spin" size={24} />
                                 Loading buffer...
+                              </div>
+                            ) : fetchError ? (
+                              <div className="flex flex-col items-center justify-center h-64 gap-4 text-center">
+                                <div className="p-4 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 max-w-md">
+                                  <p className="font-bold text-xs uppercase tracking-widest mb-1">Access Protocol Failed</p>
+                                  <p className="text-sm opacity-80">{fetchError}</p>
+                                </div>
+                                <button 
+                                  onClick={() => window.location.reload()} 
+                                  className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 hover:text-blue-400 transition-colors"
+                                >
+                                  Retry Sync
+                                </button>
                               </div>
                             ) : (
                               <pre className="whitespace-pre-wrap selection:bg-blue-500/30">

@@ -336,6 +336,25 @@ export async function copyFile(id: string, targetFolderId: string) {
   return request("POST", `/files/${id}/copy`, { targetFolderId });
 }
 
+export async function getFileContent(id: string): Promise<string> {
+  await ensureApiState();
+  const baseUrl = getApiUrl().endsWith('/') ? getApiUrl().slice(0, -1) : getApiUrl();
+  const response = await fetch(`${baseUrl}/files/raw/${id}`, {
+    headers: getHeaders()
+  });
+  if (!response.ok) {
+    let errorMsg = "Failed to fetch file content";
+    try {
+      const json = await response.json();
+      errorMsg = json.error || errorMsg;
+    } catch {
+      // Not JSON
+    }
+    throw new Error(errorMsg);
+  }
+  return response.text();
+}
+
 export async function moveFolder(id: string, targetParentId: string | null) {
   return request("PATCH", `/folders/${id}/move`, { targetParentId });
 }

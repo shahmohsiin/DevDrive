@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { filesCollection, toFileMetaResponse } from "../models/file-meta.js";
 import { foldersCollection } from "../models/folder.js";
 import { logActivity } from "../models/activity.js";
-import { getUploadPresignedUrl, getDownloadPresignedUrl } from "../b2.js";
+import { getUploadPresignedUrl, getDownloadPresignedUrl, getFileObject } from "../b2.js";
 
 /**
  * Check if user has at least the given access level on a folder
@@ -39,6 +39,50 @@ async function checkFolderAccess(
 }
 
 export default async function fileRoutes(fastify: FastifyInstance) {
+  // ─── GET /files/raw/:id ──────────────────────────────
+  fastify.get(
+    "/files/raw/:id",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+
+      if (!ObjectId.isValid(id)) {
+        return reply.status(400).send({ success: false, error: "Invalid fileId" });
+      }
+
+      const file = await filesCollection().findOne({ _id: new ObjectId(id) });
+      if (!file || file.deleted) {
+        return reply.status(404).send({ success: false, error: "File not found" });
+      }
+
+      const hasAccess = await checkFolderAccess(
+        request.user.userId,
+        request.user.role,
+        file.folderId.toHexString(),
+        "viewer"
+      );
+      if (!hasAccess) {
+        return reply.status(403).send({ success: false, error: "Access denied" });
+      }
+
+      try {
+        const s3Response = await getFileObject(file.b2Key);
+        
+        reply.header("Content-Type", file.mimeType || "application/octet-stream");
+        reply.header("Content-Disposition", `inline; filename="${file.fileName}"`);
+        reply.header("Cache-Control", "no-cache");
+        
+        return reply.send(s3Response.Body);
+      } catch (err) {
+        console.error("Failed to fetch file content from B2:", err);
+        return reply.status(500).send({ 
+          success: false, 
+          error: `Storage error: ${err instanceof Error ? err.message : String(err)}` 
+        });
+      }
+    }
+  );
+
   // ─── POST /files/upload-url ───────────────────────────────
   fastify.post(
     "/files/upload-url",
@@ -594,7 +638,5 @@ export default async function fileRoutes(fastify: FastifyInstance) {
         filePath: file.relativePath,
       });
 
-      return { success: true };
-    }
   );
 }

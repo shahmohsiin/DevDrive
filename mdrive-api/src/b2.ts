@@ -48,6 +48,18 @@ export async function getDownloadPresignedUrl(key: string): Promise<string> {
 }
 
 /**
+ * Fetch an object's stream from B2
+ */
+export async function getFileObject(key: string) {
+  const command = new GetObjectCommand({
+    Bucket: config.b2.bucketName,
+    Key: key,
+  });
+
+  return s3.send(command);
+}
+
+/**
  * Delete an object from B2
  */
 export async function deleteB2Object(key: string): Promise<void> {
