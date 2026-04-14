@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Folder, Pencil, Users as UsersIcon, Trash2 } from "lucide-react";
 
@@ -20,7 +21,7 @@ interface FolderListProps {
   setContextMenu: (menu: any) => void;
 }
 
-export function FolderList({
+export const FolderList = memo(({
   folders,
   isFolderEditor,
   isAdmin,
@@ -30,7 +31,7 @@ export function FolderList({
   setShowManageAccess,
   handleDeleteFolder,
   setContextMenu
-}: FolderListProps) {
+}: FolderListProps) => {
   if (folders.length === 0) return null;
 
   return (
@@ -71,4 +72,4 @@ export function FolderList({
       </motion.div>
     </div>
   );
-}
+});

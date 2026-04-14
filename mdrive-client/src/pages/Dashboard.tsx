@@ -176,9 +176,27 @@ export function DashboardPage() {
     });
   }
 
-  const navigateToBreadcrumb = (index: number) => {
+  const navigateToBreadcrumb = useCallback((index: number) => {
     setFolderPath(prev => prev.slice(0, index + 1));
-  };
+  }, []);
+
+  const selectFolder = useCallback((folder: FolderItem) => {
+    setFolderPath(prev => {
+      // Guard: Don't add if we're already navigating to/in this folder
+      if (prev.length > 0 && prev[prev.length - 1]._id === folder._id) {
+        return prev;
+      }
+      return [...prev, folder];
+    });
+  }, []);
+
+  const goBack = useCallback(() => {
+    setFolderPath(prev => prev.slice(0, -1));
+  }, []);
+
+  const goToRoot = useCallback(() => {
+    setFolderPath([]);
+  }, []);
 
   function scheduleTransferCleanup(transferId: string, delayMs = 500) {
     window.setTimeout(() => {
@@ -320,17 +338,6 @@ export function DashboardPage() {
     }
   }, [loadFolders, loadFiles, selectedFolder?._id]);
 
-  function selectFolder(folder: FolderItem) {
-    setFolderPath(prev => [...prev, folder]);
-  }
-
-  function goBack() {
-    setFolderPath(prev => prev.slice(0, -1));
-  }
-
-  function goToRoot() {
-    setFolderPath([]);
-  }
 
   const handleRefreshAll = useCallback(async () => {
     if (refreshing) return;

@@ -12,10 +12,18 @@ async function hasFolderAccess(folderId: ObjectId, userId: ObjectId, isAdmin: bo
   if (isAdmin) return true;
 
   let currentId: ObjectId | null = folderId;
+  const visited = new Set<string>();
+  let depth = 0;
+  const MAX_DEPTH = 20;
   
-  // Basic recursive check. For extremely deep trees, a more optimized path-based approach is better,
-  // but for standard use this is robust.
-  while (currentId) {
+  while (currentId && depth < MAX_DEPTH) {
+    const idStr = currentId.toString();
+    if (visited.has(idStr)) {
+      console.warn(`[RBAC] Circular reference detected at folder ${idStr}`);
+      break;
+    }
+    visited.add(idStr);
+
     const folder = await foldersCollection().findOne({ _id: currentId });
     if (!folder) break;
 
@@ -23,12 +31,12 @@ async function hasFolderAccess(folderId: ObjectId, userId: ObjectId, isAdmin: bo
       (p) => p.userId.equals(userId)
     );
     
-    // Also check if owner
     if (folder.ownerId.equals(userId) || hasExplicitPermission) {
       return true;
     }
 
     currentId = folder.parentId;
+    depth++;
   }
 
   return false;
