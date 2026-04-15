@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { 
   X, 
   Download, 
-  ExternalLink, 
   FileText, 
   Image as ImageIcon, 
   Eye, 
@@ -237,7 +236,6 @@ export function FilePreviewModal({
                 )}
                 
                 <button onClick={handleDownload} className="p-2 rounded-lg hover:bg-surface-hover text-text-secondary transition-colors" title="Download"><Download size={18} /></button>
-                <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg hover:bg-surface-hover text-text-secondary transition-colors" title="Open Externally"><ExternalLink size={18} /></a>
                 <div className="w-px h-6 bg-border-default mx-2" />
                 <button onClick={onClose} className="p-2 rounded-xl bg-surface-hover hover:bg-accent-rose/10 hover:text-accent-rose text-text-secondary transition-all duration-300"><X size={20} /></button>
               </div>
@@ -269,24 +267,14 @@ export function FilePreviewModal({
                       )}
                     </div>
                   ) : (
-                    <div className="p-8 w-full max-w-5xl mx-auto h-full overflow-auto">
-                       <div className="bg-[#0d1117] rounded-xl border border-white/5 overflow-hidden shadow-2xl min-h-full">
-                          <div className="px-4 py-2 bg-[#161b22] border-b border-white/5 flex items-center justify-between sticky top-0">
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-3 h-3 rounded-full bg-rose-500/50" />
-                              <div className="w-3 h-3 rounded-full bg-amber-500/50" />
-                              <div className="w-3 h-3 rounded-full bg-emerald-500/50" />
-                            </div>
-                            <span className="text-[10px] font-mono text-gray-500">{fileName}</span>
-                          </div>
-                          <div className="p-8 font-mono text-[13px] text-gray-300 leading-relaxed">
+                    <div className="flex-1 w-full h-full p-12 overflow-auto font-mono text-[14px] text-text-primary bg-surface-primary selection:bg-blue-500/20 leading-relaxed">
                             {loadingText ? (
-                              <div className="flex flex-col items-center justify-center h-64 gap-3 text-gray-600 italic">
+                              <div className="flex flex-col items-center justify-center h-full gap-3 text-text-muted italic">
                                 <RotateCcw className="animate-spin" size={24} />
                                 Loading buffer...
                               </div>
                             ) : fetchError ? (
-                              <div className="flex flex-col items-center justify-center h-64 gap-4 text-center">
+                               <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
                                 <div className="p-4 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 max-w-md">
                                   <p className="font-bold text-xs uppercase tracking-widest mb-1">Access Protocol Failed</p>
                                   <p className="text-sm opacity-80">{fetchError}</p>
@@ -299,15 +287,15 @@ export function FilePreviewModal({
                                 </button>
                               </div>
                             ) : (
-                              <pre className="whitespace-pre-wrap selection:bg-blue-500/30">
+                              <pre className="whitespace-pre-wrap">
                                 {textContent || "// Empty File"}
                               </pre>
                             )}
-                          </div>
-                       </div>
                     </div>
                   )}
                 </div>
+              ) : isPDF ? (
+                <iframe src={downloadUrl} className="w-full h-full border-none" title="PDF Preview" />
               ) : (
                 <div className="text-center p-12">
                   <div className="w-24 h-24 rounded-3xl bg-surface-secondary flex items-center justify-center mx-auto mb-8 text-text-muted border border-border-default"><Eye size={40} /></div>

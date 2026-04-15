@@ -9,17 +9,11 @@ import {
   ChevronLeft, 
   Pencil, 
   Trash2, 
-  Download, 
-  Eye, 
   X,
   LayoutGrid,
   List as ListIcon,
-  HardDrive,
-  Users as UsersIcon,
   Folder,
   Loader2,
-  CheckCircle2,
-  AlertCircle,
   RefreshCw,
   Plus,
   Home,
@@ -66,28 +60,7 @@ import { Breadcrumbs } from "../components/Dashboard/Breadcrumbs";
 import { FolderList } from "../components/Dashboard/FolderList";
 import { FileList } from "../components/Dashboard/FileList";
 import { TransferMonitor } from "../components/Dashboard/TransferMonitor";
-
-interface FolderItem {
-  _id: string;
-  name: string;
-  description: string;
-  ownerId: string;
-  parentId?: string;
-  permissions: Array<{ userId: string; access: string }>;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface FileItem {
-  _id: string;
-  folderId: string;
-  relativePath: string;
-  fileName: string;
-  mimeType: string;
-  currentVersion: number;
-  size: number;
-  updatedAt: string;
-}
+import type { DashboardFileItem as FileItem, DashboardFolderItem as FolderItem } from "../components/Dashboard/types";
 
 interface TransferState {
   id: string;
@@ -177,13 +150,15 @@ export function DashboardPage() {
   }
 
   const navigateToBreadcrumb = useCallback((index: number) => {
+    setLoading(true);
     setFolderPath(prev => prev.slice(0, index + 1));
   }, []);
 
   const selectFolder = useCallback((folder: FolderItem) => {
+    setLoading(true);
     setFolderPath(prev => {
-      // Guard: Don't add if we're already navigating to/in this folder
       if (prev.length > 0 && prev[prev.length - 1]._id === folder._id) {
+        setLoading(false);
         return prev;
       }
       return [...prev, folder];
@@ -191,10 +166,12 @@ export function DashboardPage() {
   }, []);
 
   const goBack = useCallback(() => {
+    setLoading(true);
     setFolderPath(prev => prev.slice(0, -1));
   }, []);
 
   const goToRoot = useCallback(() => {
+    setLoading(true);
     setFolderPath([]);
   }, []);
 
@@ -928,14 +905,27 @@ export function DashboardPage() {
           )}
         </AnimatePresence>
 
-        <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center h-64 gap-4">
-              <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
-              <p className="text-xs text-text-muted font-mono tracking-widest animate-pulse">Initializing Engine...</p>
-            </div>
-          ) : (
-            <div className="h-full flex flex-col space-y-8">
+        <div className="flex-1 overflow-y-auto p-6 scroll-smooth min-h-0">
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div 
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-center h-full min-h-[400px]"
+              >
+                <Loader2 className="w-10 h-10 text-blue-500/30 animate-spin" />
+              </motion.div>
+            ) : (
+              <motion.div 
+                key={selectedFolder?._id || "root"}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="h-full flex flex-col space-y-8"
+              >
               <FolderList 
                 folders={filteredFolders}
                 isFolderEditor={isFolderEditor}
@@ -970,9 +960,10 @@ export function DashboardPage() {
                   />
                 </div>
               )}
-            </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
+      </div>
 
         <AnimatePresence>
           {showHistory && (

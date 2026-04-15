@@ -44,9 +44,9 @@ export function CodeEditor({ value, onChange, language = 'text' }: CodeEditorPro
   const lineCount = value.split('\n').length;
 
   return (
-    <div className="flex-1 w-full h-full bg-[#0d1117] flex overflow-hidden font-mono text-sm leading-relaxed">
+    <div className="flex-1 w-full h-full bg-surface-secondary flex overflow-hidden font-mono text-sm leading-relaxed">
       {/* Line Numbers */}
-      <div className="w-12 bg-[#161b22] text-gray-600 text-right pr-3 pt-[25px] select-none border-r border-white/5 opacity-50">
+      <div className="w-12 bg-surface-active/30 text-text-muted text-right pr-3 pt-[25px] select-none border-r border-border-default opacity-50">
         {Array.from({ length: Math.max(lineCount, 1) }).map((_, i) => (
           <div key={i} className="h-[21px]">{i + 1}</div>
         ))}
@@ -61,7 +61,7 @@ export function CodeEditor({ value, onChange, language = 'text' }: CodeEditorPro
           onScroll={handleScroll}
           onKeyDown={handleKeyDown}
           spellCheck={false}
-          className="absolute inset-0 w-full h-full p-6 pt-[25px] bg-transparent text-gray-300 outline-none resize-none caret-blue-500 overflow-auto z-10 scrollbar-thin selection:bg-blue-500/30 whitespace-pre"
+          className="absolute inset-0 w-full h-full p-6 pt-[25px] bg-transparent text-text-primary outline-none resize-none caret-blue-500 overflow-auto z-10 scrollbar-thin selection:bg-blue-500/30 whitespace-pre"
         />
         
         {/* Shadow Layer for syntax highlighting background if needed in future */}

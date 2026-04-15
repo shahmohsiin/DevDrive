@@ -1,25 +1,39 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Folder, Pencil, Users as UsersIcon, Trash2 } from "lucide-react";
-
-interface FolderItem {
-  _id: string;
-  name: string;
-  description: string;
-  permissions: any[];
-}
+import type { DashboardFolderItem } from "./types";
 
 interface FolderListProps {
-  folders: FolderItem[];
+  folders: DashboardFolderItem[];
   isFolderEditor: boolean;
   isAdmin: boolean;
-  selectFolder: (folder: FolderItem) => void;
+  selectFolder: (folder: DashboardFolderItem) => void;
   setShowRename: (rename: { id: string, name: string, type: 'folder' }) => void;
   setRenameValue: (val: string) => void;
   setShowManageAccess: (access: { id: string; name: string; permissions: any[] }) => void;
   handleDeleteFolder: (id: string) => void;
   setContextMenu: (menu: any) => void;
 }
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 10, scale: 0.95 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { type: "spring", stiffness: 300, damping: 24 }
+  }
+};
 
 export const FolderList = memo(({
   folders,
@@ -37,16 +51,24 @@ export const FolderList = memo(({
   return (
     <div className="space-y-4">
       <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] px-1">Sub-Folders</h3>
-      <motion.div layout className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        layout
+        className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5"
+      >
         {folders.map(f => (
           <motion.div
-            layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            variants={itemVariants}
+            whileHover={{ scale: 1.02, y: -4 }}
+            whileTap={{ scale: 0.98 }}
             key={f._id} onClick={() => selectFolder(f)}
             onContextMenu={(e) => {
               e.preventDefault();
               setContextMenu({ x: e.clientX, y: e.clientY, item: f, type: 'folder' });
             }}
-            className="group relative bg-surface-secondary rounded-[32px] p-6 border border-border-default hover:border-blue-500/30 transition-all cursor-pointer hover:shadow-2xl hover:-translate-y-1"
+            className="group relative bg-surface-secondary rounded-[32px] p-6 border border-border-default hover:border-blue-500/30 cursor-pointer shadow-sm hover:shadow-xl transition-colors duration-200"
           >
              <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5">
                 {isFolderEditor && (

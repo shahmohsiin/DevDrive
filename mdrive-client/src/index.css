@@ -95,70 +95,35 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
-  }
+  /* Use native system scrollbars */
 }
 
 /* ─── Utilities ────────────────────────────────────────────── */
 @layer utilities {
   .glass {
     background: var(--color-surface-secondary);
-    opacity: 0.8;
-    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-border-default);
   }
 
-  .gradient-text {
-    background: linear-gradient(
-      135deg,
-      var(--color-gradient-start),
-      var(--color-gradient-end)
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .gradient-border {
-    border: 1px solid transparent;
-    background-image: linear-gradient(var(--color-surface-card), var(--color-surface-card)),
-      linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
+  .solid-border {
+    border: 1px solid var(--color-border-default);
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
+    background: var(--color-accent-blue);
     color: white;
     border: none;
     border-radius: 0.5rem;
     padding: 0.625rem 1.25rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     font-size: 0.875rem;
   }
 
   .btn-primary:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    background: #2563eb;
   }
 
   .btn-primary:active {

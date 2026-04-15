@@ -1,15 +1,12 @@
+import type { Dispatch, SetStateAction } from "react";
 import { HardDrive } from "lucide-react";
-
-interface FolderItem {
-  _id: string;
-  name: string;
-}
+import type { DashboardFolderItem } from "./types";
 
 interface BreadcrumbsProps {
-  folderPath: FolderItem[];
+  folderPath: DashboardFolderItem[];
   goToRoot: () => void;
   navigateToBreadcrumb: (index: number) => void;
-  setFolderPath: (path: FolderItem[]) => void;
+  setFolderPath: Dispatch<SetStateAction<DashboardFolderItem[]>>;
 }
 
 export function Breadcrumbs({ 

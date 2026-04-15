@@ -11,10 +11,21 @@ pub struct AuthState {
 #[tauri::command]
 pub fn get_auth_state() -> AuthState {
     let config = load_config();
+    let mut api_url = config.api_url;
+
+    #[cfg(target_os = "android")]
+    {
+        if api_url.contains("localhost") {
+            api_url = api_url.replace("localhost", "10.0.2.2");
+        } else if api_url.contains("127.0.0.1") {
+            api_url = api_url.replace("127.0.0.1", "10.0.2.2");
+        }
+    }
+
     AuthState {
         is_authenticated: config.access_token.is_some(),
         access_token: config.access_token,
-        api_url: config.api_url,
+        api_url,
     }
 }
 
