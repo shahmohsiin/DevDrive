@@ -30,17 +30,22 @@ export function useNotifications() {
    * Helper to check for mentions in a string
    */
   const checkMentions = useCallback((content: string, currentUserEmail: string, currentUserName: string) => {
-    const mentionRegex = /@(\w+)/g;
+    // Matches @name or @name_prefix
+    const mentionRegex = /@(\w+|"[\w\s]+")|@everyone/gi;
     const mentions = content.match(mentionRegex) || [];
     
-    // Check if the current user is mentioned (@username or @email_prefix)
+    console.log('Checking mentions in:', content, 'Mentions found:', mentions);
+
     const userIdentifier = currentUserName.toLowerCase().replace(/\s+/g, '');
     const emailPrefix = currentUserEmail.split('@')[0].toLowerCase();
     
-    return mentions.some(m => {
-      const target = m.slice(1).toLowerCase();
+    const isMentioned = mentions.some(m => {
+      const target = m.slice(1).toLowerCase().replace(/"/g, '');
       return target === userIdentifier || target === emailPrefix || target === 'everyone';
     });
+
+    console.log('Is current user mentioned?', isMentioned);
+    return isMentioned;
   }, []);
 
   return { notify, checkMentions, hasPermission };
