@@ -18,9 +18,14 @@ import {
   updateNote,
   deleteNote
 } from "../lib/api";
+import { useAuth } from "../hooks/useAuth";
+import { useNotifications } from "../hooks/useNotifications";
+import { useRef } from "react";
 
 interface Note {
   _id: string;
+  userId: string;
+  userName?: string;
   content: string;
   createdAt: string;
   updatedAt: string;
@@ -41,6 +46,9 @@ export function NotesSidebar({ folderId, onClose }: NotesSidebarProps) {
   const [submitting, setSubmitting] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState("");
+  const { user } = useAuth();
+  const { notify, checkMentions } = useNotifications();
+  const lastNoteIdRef = useRef<string | null>(null);
 
   const startResizing = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -69,22 +77,46 @@ export function NotesSidebar({ folderId, onClose }: NotesSidebarProps) {
 
   useEffect(() => {
     if (folderId) {
-      fetchNotes();
+      fetchNotes(true);
+      const interval = setInterval(() => fetchNotes(false), 8000);
+      return () => clearInterval(interval);
     }
   }, [folderId]);
 
-  async function fetchNotes() {
+  async function fetchNotes(showLoading = false) {
     if (!folderId) return;
-    setLoading(true);
+    if (showLoading) setLoading(true);
     try {
       const res = await getFolderNotes(folderId);
       if (res.success && Array.isArray(res.data)) {
-        setNotes(res.data as Note[]);
+        const newNotes = res.data as Note[];
+        
+        // Notification Logic
+        if (lastNoteIdRef.current && newNotes.length > 0) {
+          const latest = newNotes[0]; // Notes are usually desc
+          if (latest._id !== lastNoteIdRef.current && latest.userId !== (user as any)?._id) {
+            const isMentioned = checkMentions(latest.content, user?.email || '', user?.displayName || '');
+            const isWindowBlurred = !document.hasFocus();
+
+            if (isMentioned || isWindowBlurred) {
+              notify(
+                isMentioned ? `Mentioned in a Note` : `New Note available`,
+                latest.content.slice(0, 100) + (latest.content.length > 100 ? '...' : ''),
+                { icon: 'note' }
+              );
+            }
+          }
+        }
+
+        if (newNotes.length > 0) {
+          lastNoteIdRef.current = newNotes[0]._id;
+        }
+        setNotes(newNotes);
       }
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   }
 

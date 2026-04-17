@@ -24,6 +24,7 @@ import {
   deleteFolderMessage
 } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
+import { useNotifications } from "../hooks/useNotifications";
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -93,6 +94,8 @@ export function CommunitySidebar({ folderId, onClose }: CommunitySidebarProps) {
   const [selectedAttachments, setSelectedAttachments] = useState<FileItem[]>([]);
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const lastMsgIdRef = useRef<string | null>(null);
+  const { notify, checkMentions } = useNotifications();
 
   const emojis = ["👍", "❤️", "😂", "😮", "😢", "🔥", "✅", "🚀", "💡", "💯"];
 
@@ -137,7 +140,43 @@ export function CommunitySidebar({ folderId, onClose }: CommunitySidebarProps) {
     if (!folderId) return;
     try {
       const res = await getFolderChat(folderId);
-      if (res.success && res.data) setMessages(res.data as any);
+      if (res.success && res.data) {
+        // Map backend fields to the ChatMessage interface
+        const rawMessages = res.data as any[];
+        const newMessages: ChatMessage[] = rawMessages.map(m => ({
+          _id: m._id,
+          senderId: m.userId || m.senderId,
+          senderName: m.userName || m.senderName || 'Unknown',
+          senderEmail: m.userEmail || m.senderEmail || '',
+          content: m.content,
+          attachments: m.attachments,
+          replyTo: m.replyTo,
+          replyToContent: m.replyToContent,
+          createdAt: m.createdAt
+        }));
+        
+        // Notification Logic
+        if (lastMsgIdRef.current && newMessages.length > 0) {
+          const latest = newMessages[newMessages.length - 1];
+          if (latest._id !== lastMsgIdRef.current && latest.senderId !== (user as any)?._id) {
+            const isMentioned = checkMentions(latest.content, user?.email || '', user?.displayName || '');
+            const isWindowBlurred = !document.hasFocus();
+
+            if (isMentioned || isWindowBlurred) {
+              notify(
+                isMentioned ? `Mentioned by ${latest.senderName}` : `New message from ${latest.senderName}`,
+                latest.content,
+                { icon: 'message' }
+              );
+            }
+          }
+        }
+
+        if (newMessages.length > 0) {
+          lastMsgIdRef.current = newMessages[newMessages.length - 1]._id;
+        }
+        setMessages(newMessages);
+      }
     } catch (err) {
       console.error(err);
     }
